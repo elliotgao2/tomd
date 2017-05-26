@@ -7,11 +7,15 @@ Convert HTML to Markdown.
 
 ## Getting Started
 
+Input
+
 ```python
 from tomd import Tomd
 
 Tomd("<h1>h1</h1>").markdown
 ```
+
+Output
 
 ```markdown
 # h1
