@@ -23,21 +23,20 @@ MARKDOWN = {
     'inline_p_with_out_class': ('', '')
 }
 
-BlOCK_ELEMENTS = {
-    'h1': '<h1.*?>(.*?)</h1>',
-    'h2': '<h2.*?>(.*?)</h2>',
-    'h3': '<h3.*?>(.*?)</h3>',
-    'h4': '<h4.*?>(.*?)</h4>',
-    'h5': '<h5.*?>(.*?)</h5>',
-    'h6': '<h6.*?>(.*?)</h6>',
-    'p': '<p\s.*?>(.*?)</p>',
-    'p_with_out_class': '<p>(.*?)</p>',  # conflict with <pre>
-    'blockquote': '<blockquote.*?>(.*?)</blockquote>',
-    'ul': '<ul.*?>(.*?)</ul>',
-    'ol': '<ol.*?>(.*?)</ol>',
-    'block_code': '<pre.*?><code.*?>(.*?)</code></pre>',
-
-}
+BlOCK_ELEMENTS = (
+    ('h1', '<h1.*?>(.*?)</h1>'),
+    ('h2', '<h2.*?>(.*?)</h2>'),
+    ('h3', '<h3.*?>(.*?)</h3>'),
+    ('h4', '<h4.*?>(.*?)</h4>'),
+    ('h5', '<h5.*?>(.*?)</h5>'),
+    ('h6', '<h6.*?>(.*?)</h6>'),
+    ('blockquote', '<blockquote.*?>(.*?)</blockquote>'),
+    ('ul', '<ul.*?>(.*?)</ul>'),
+    ('ol', '<ol.*?>(.*?)</ol>'),
+    ('block_code', '<pre.*?><code.*?>(.*?)</code></pre>'),
+    ('p', '<p\s.*?>(.*?)</p>'),
+    ('p_with_out_class', '<p>(.*?)</p>'),  # conflict with <pre>
+)
 
 INLINE_ELEMENTS = {
     'inline_p': '<p\s.*?>(.*?)</p>',
@@ -52,20 +51,20 @@ INLINE_ELEMENTS = {
     'em': '<em.*?>(.*?)</em>'
 }
 
-## pos < max_pos
-
 DELETE_ELEMENTS = ['<span.*?>', '</span>', '<div.*?>', '</div>']
 
 
 class Element:
-    def __init__(self, pos, content, tag):
-        self.pos = pos
+    def __init__(self, start_pos, end_pos, content, tag, is_block=False):
+        self.start_pos = start_pos
+        self.end_pos = end_pos
         self.content = content
         self._elements = []
+        self.is_block = is_block
         self.tag = tag
         self._result = None
 
-        if tag in BlOCK_ELEMENTS:
+        if self.is_block:
             self.parse_inline()
 
     def __str__(self):
@@ -89,13 +88,21 @@ class Tomd:
             self._markdown = re.sub(element, '', self._markdown)
 
     def parse_block(self):
-
-        for tag, pattern in BlOCK_ELEMENTS.items():
+        for tag, pattern in BlOCK_ELEMENTS:
             for m in re.finditer(pattern, self.html, re.I | re.S | re.M):
-                element = Element(pos=m.start(), content=''.join(m.groups()), tag=tag)
-                self._elements.append(element)
+                element = Element(start_pos=m.start(),
+                                  end_pos=m.end(),
+                                  content=''.join(m.groups()),
+                                  tag=tag,
+                                  is_block=True)
+                can_append = True
+                for e in self._elements:
+                    if e.start_pos < m.start() and e.end_pos > m.end():
+                        can_append = False
+                if can_append:
+                    self._elements.append(element)
 
-        self._elements.sort(key=lambda element: element.pos)
+        self._elements.sort(key=lambda element: element.start_pos)
         self._markdown = ''.join([str(e) for e in self._elements])
 
     @property
