@@ -3,7 +3,7 @@ Convert HTML to Markdown.
 
 ## Installation
 
-`pip install tomd'
+`pip install tomd`
 
 ## Getting Started
 
