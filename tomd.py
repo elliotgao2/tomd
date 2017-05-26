@@ -10,17 +10,17 @@ MARKDOWN = {
     'code': ('`', '`'),
     'ul': ('', ''),
     'ol': ('', ''),
-    'li': ('*. ', ''),
-    'blockquote': ('> ', '\n'),
+    'li': ('- ', ''),
+    'blockquote': ('\n> ', '\n'),
     'em': ('**', '**'),
-    'a': ('[](', ')'),
-    'img': ('![](', ')'),
     'block_code': ('\n```\n', '\n```\n'),
     'span': ('', ''),
     'p': ('\n', '\n'),
     'p_with_out_class': ('\n', '\n'),
     'inline_p': ('', ''),
-    'inline_p_with_out_class': ('', '')
+    'inline_p_with_out_class': ('', ''),
+    'b': ('**', '**'),
+    'i': ('*', '*')
 }
 
 BlOCK_ELEMENTS = (
@@ -30,15 +30,19 @@ BlOCK_ELEMENTS = (
     ('h4', '<h4.*?>(.*?)</h4>'),
     ('h5', '<h5.*?>(.*?)</h5>'),
     ('h6', '<h6.*?>(.*?)</h6>'),
+    ('hr', '<hr/>'),
     ('blockquote', '<blockquote.*?>(.*?)</blockquote>'),
     ('ul', '<ul.*?>(.*?)</ul>'),
     ('ol', '<ol.*?>(.*?)</ol>'),
     ('block_code', '<pre.*?><code.*?>(.*?)</code></pre>'),
     ('p', '<p\s.*?>(.*?)</p>'),
-    ('p_with_out_class', '<p>(.*?)</p>'),  # conflict with <pre>
-)
+    ('p_with_out_class', '<p>(.*?)</p>'),
+    ('b', '<b>(.*?)</b>'),
+    ('i', '<i>(.*?)</i>'))
 
 INLINE_ELEMENTS = {
+    'b': '<b>(.*?)</b>',
+    'i': '<i>(.*?)</i>',
     'inline_p': '<p\s.*?>(.*?)</p>',
     'inline_p_with_out_class': '<p>(.*?)</p>',
     'code': '<code.*?>(.*?)</code>',
@@ -46,8 +50,8 @@ INLINE_ELEMENTS = {
     'ul': '<ul.*?>(.*?)</ul>',
     'ol': '<ol.*?>(.*?)</ol>',
     'li': '<li.*?>(.*?)</li>',
-    'img': '<img.*?>(.*?)</img>',
-    'a': '<a.*?>(.*?)</a>',
+    'img': '<img.*?src="(.*?)".*?>(.*?)</img>',
+    'a': '<a.*?href="(.*?)".*?>(.*?)</a>',
     'em': '<em.*?>(.*?)</em>'
 }
 
@@ -74,8 +78,18 @@ class Element:
 
     def parse_inline(self):
         for tag, pattern in INLINE_ELEMENTS.items():
-            wrapper = MARKDOWN.get(tag)
-            self.content = re.sub(pattern, '{}\g<1>{}'.format(wrapper[0], wrapper[1]), self.content)
+
+            if tag == 'a':
+                self.content = re.sub(pattern, '[\g<2>](\g<1>)', self.content)
+            elif tag == 'img':
+                self.content = re.sub(pattern, '![\g<2>](\g<1>)', self.content)
+            elif self.tag == 'ul' and tag == 'li':
+                self.content = re.sub(pattern, '- \g<1>', self.content)
+            elif self.tag == 'ol' and tag == 'li':
+                self.content = re.sub(pattern, '1. \g<1>', self.content)
+            else:
+                wrapper = MARKDOWN.get(tag)
+                self.content = re.sub(pattern, '{}\g<1>{}'.format(wrapper[0], wrapper[1]), self.content)
 
 
 class Tomd:
