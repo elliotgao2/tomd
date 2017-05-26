@@ -7,7 +7,7 @@ Convert HTML to Markdown.
 
 ## Getting Started
 
-```
+```python
 from tomd import Tomd
 
 Tomd("<h1>h1</h1>").markdown
@@ -19,7 +19,7 @@ Tomd("<h1>h1</h1>").markdown
 
 ## Usage
 
-```
+```python
 from tomd import Tomd
 
 
@@ -61,7 +61,7 @@ Tomd(html).markdown
 
 ## Result
 
-```
+```markdown
 # h1
 
 ## h2
@@ -90,11 +90,6 @@ paragraph
 > blockquote
 
 `inline code`
-
-```
-block code
-```
-
 
 **bold**
 *italic*
