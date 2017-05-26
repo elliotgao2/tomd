@@ -7,18 +7,20 @@ MARKDOWN = {
     'h4': ('\n#### ', '\n'),
     'h5': ('\n##### ', '\n'),
     'h6': ('\n###### ', '\n'),
-    'p': ('\n', '\n'),
-    'p_with_out_class': ('\n', '\n'),
     'code': ('`', '`'),
-    'ul': ('\n', '\n'),
-    'ol': ('\n', '\n'),
+    'ul': ('', ''),
+    'ol': ('', ''),
     'li': ('*. ', ''),
     'blockquote': ('> ', '\n'),
     'em': ('**', '**'),
     'a': ('[](', ')'),
     'img': ('![](', ')'),
     'block_code': ('\n```\n', '\n```\n'),
-    'span': ('', '')
+    'span': ('', ''),
+    'p': ('\n', '\n'),
+    'p_with_out_class': ('\n', '\n'),
+    'inline_p': ('', ''),
+    'inline_p_with_out_class': ('', '')
 }
 
 BlOCK_ELEMENTS = {
@@ -29,22 +31,30 @@ BlOCK_ELEMENTS = {
     'h5': '<h5.*?>(.*?)</h5>',
     'h6': '<h6.*?>(.*?)</h6>',
     'p': '<p\s.*?>(.*?)</p>',
-    'p_with_out_class': '<p>(.*?)</p>',
+    'p_with_out_class': '<p>(.*?)</p>',  # conflict with <pre>
     'blockquote': '<blockquote.*?>(.*?)</blockquote>',
     'ul': '<ul.*?>(.*?)</ul>',
+    'ol': '<ol.*?>(.*?)</ol>',
     'block_code': '<pre.*?><code.*?>(.*?)</code></pre>',
+
 }
 
 INLINE_ELEMENTS = {
+    'inline_p': '<p\s.*?>(.*?)</p>',
+    'inline_p_with_out_class': '<p>(.*?)</p>',
     'code': '<code.*?>(.*?)</code>',
     'span': '<span.*?>(.*?)</span>',
+    'ul': '<ul.*?>(.*?)</ul>',
     'ol': '<ol.*?>(.*?)</ol>',
     'li': '<li.*?>(.*?)</li>',
     'img': '<img.*?>(.*?)</img>',
     'a': '<a.*?>(.*?)</a>',
-    'em': '<em.*?>(.*?)</em>',
-    # 'pre': '<pre.*><code.*>(.*)</code></pre>',
+    'em': '<em.*?>(.*?)</em>'
 }
+
+## pos < max_pos
+
+DELETE_ELEMENTS = ['<span.*?>', '</span>', '<div.*?>', '</div>']
 
 
 class Element:
@@ -75,16 +85,16 @@ class Tomd:
         self._elements = []
         self._markdown = None
         self.parse_block()
-        print(self._markdown)
-        for element in self._elements:
-            if len(element._result) > 1000:
-                print(element.__dict__)
+        for index, element in enumerate(DELETE_ELEMENTS):
+            self._markdown = re.sub(element, '', self._markdown)
 
     def parse_block(self):
+
         for tag, pattern in BlOCK_ELEMENTS.items():
             for m in re.finditer(pattern, self.html, re.I | re.S | re.M):
                 element = Element(pos=m.start(), content=''.join(m.groups()), tag=tag)
                 self._elements.append(element)
+
         self._elements.sort(key=lambda element: element.pos)
         self._markdown = ''.join([str(e) for e in self._elements])
 
