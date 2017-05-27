@@ -23,22 +23,22 @@ MARKDOWN = {
     'i': ('*', '*')
 }
 
-BlOCK_ELEMENTS = (
-    ('h1', '<h1.*?>(.*?)</h1>'),
-    ('h2', '<h2.*?>(.*?)</h2>'),
-    ('h3', '<h3.*?>(.*?)</h3>'),
-    ('h4', '<h4.*?>(.*?)</h4>'),
-    ('h5', '<h5.*?>(.*?)</h5>'),
-    ('h6', '<h6.*?>(.*?)</h6>'),
-    ('hr', '<hr/>'),
-    ('blockquote', '<blockquote.*?>(.*?)</blockquote>'),
-    ('ul', '<ul.*?>(.*?)</ul>'),
-    ('ol', '<ol.*?>(.*?)</ol>'),
-    ('block_code', '<pre.*?><code.*?>(.*?)</code></pre>'),
-    ('p', '<p\s.*?>(.*?)</p>'),
-    ('p_with_out_class', '<p>(.*?)</p>'),
-    ('b', '<b>(.*?)</b>'),
-    ('i', '<i>(.*?)</i>'))
+BlOCK_ELEMENTS = {
+    'h1': '<h1.*?>(.*?)</h1>',
+    'h2': '<h2.*?>(.*?)</h2>',
+    'h3': '<h3.*?>(.*?)</h3>',
+    'h4': '<h4.*?>(.*?)</h4>',
+    'h5': '<h5.*?>(.*?)</h5>',
+    'h6': '<h6.*?>(.*?)</h6>',
+    'hr': '<hr/>',
+    'blockquote': '<blockquote.*?>(.*?)</blockquote>',
+    'ul': '<ul.*?>(.*?)</ul>',
+    'ol': '<ol.*?>(.*?)</ol>',
+    'block_code': '<pre.*?><code.*?>(.*?)</code></pre>',
+    'p': '<p\s.*?>(.*?)</p>',
+    'p_with_out_class': '<p>(.*?)</p>',
+    'b': '<b>(.*?)</b>',
+    'i': '<i>(.*?)</i>'}
 
 INLINE_ELEMENTS = {
     'b': '<b>(.*?)</b>',
@@ -102,7 +102,7 @@ class Tomd:
             self._markdown = re.sub(element, '', self._markdown)
 
     def parse_block(self):
-        for tag, pattern in BlOCK_ELEMENTS:
+        for tag, pattern in BlOCK_ELEMENTS.items():
             for m in re.finditer(pattern, self.html, re.I | re.S | re.M):
                 element = Element(start_pos=m.start(),
                                   end_pos=m.end(),
@@ -113,6 +113,8 @@ class Tomd:
                 for e in self._elements:
                     if e.start_pos < m.start() and e.end_pos > m.end():
                         can_append = False
+                    elif e.start_pos > m.start() and e.end_pos < m.end():
+                        self._elements.remove(e)
                 if can_append:
                     self._elements.append(element)
 
