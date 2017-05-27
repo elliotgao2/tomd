@@ -1,6 +1,10 @@
 # tomd
 Convert HTML to Markdown.
 
+![[License](https://pypi.python.org/pypi/tomd/)](https://img.shields.io/pypi/l/tomd.svg)
+![[Pypi](https://pypi.python.org/pypi/tomd/)](https://img.shields.io/pypi/v/tomd.svg)
+![[Python](https://pypi.python.org/pypi/tomd/)](https://img.shields.io/pypi/pyversions/tomd.svg)
+
 ## Road map
 
 - [x] Basic support
