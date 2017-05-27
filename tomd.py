@@ -1,5 +1,7 @@
 import re
 
+__all__ = ['Tomd', 'convert']
+
 MARKDOWN = {
     'h1': ('\n# ', '\n'),
     'h2': ('\n## ', '\n'),
@@ -45,7 +47,10 @@ BlOCK_ELEMENTS = {
     'p': '<p\s.*?>(.*?)</p>',
     'p_with_out_class': '<p>(.*?)</p>',
     'thead': '<thead.*?>(.*?)</thead>',
-    'tr': '<tr>(.*?)</tr>'
+    'tr': '<tr>(.*?)</tr>',
+    'b': '<b>(.*?)</b>',
+    'i': '<i>(.*?)</i>',
+    'del': '<del>(.*?)</del>'
 }
 
 INLINE_ELEMENTS = {
@@ -111,34 +116,41 @@ class Element:
 
 
 class Tomd:
-    def __init__(self, html):
+    def __init__(self, html='', options=None):
         self.html = html
-        self._elements = []
-        self._markdown = None
-        self.parse_block()
-        for index, element in enumerate(DELETE_ELEMENTS):
-            self._markdown = re.sub(element, '', self._markdown)
+        self.options = options
+        self._markdown = ''
 
-    def parse_block(self):
+    def convert(self, html, options=None):
+        elements = []
         for tag, pattern in BlOCK_ELEMENTS.items():
-            for m in re.finditer(pattern, self.html, re.I | re.S | re.M):
+            for m in re.finditer(pattern, html, re.I | re.S | re.M):
                 element = Element(start_pos=m.start(),
                                   end_pos=m.end(),
                                   content=''.join(m.groups()),
                                   tag=tag,
                                   is_block=True)
                 can_append = True
-                for e in self._elements:
+                for e in elements:
                     if e.start_pos < m.start() and e.end_pos > m.end():
                         can_append = False
                     elif e.start_pos > m.start() and e.end_pos < m.end():
-                        self._elements.remove(e)
+                        elements.remove(e)
                 if can_append:
-                    self._elements.append(element)
+                    elements.append(element)
 
-        self._elements.sort(key=lambda element: element.start_pos)
-        self._markdown = ''.join([str(e) for e in self._elements])
+        elements.sort(key=lambda element: element.start_pos)
+        self._markdown = ''.join([str(e) for e in elements])
+
+        for index, element in enumerate(DELETE_ELEMENTS):
+            self._markdown = re.sub(element, '', self._markdown)
+        return self._markdown
 
     @property
     def markdown(self):
+        self.convert(self.html, self.options)
         return self._markdown
+
+
+_inst = Tomd()
+convert = _inst.convert

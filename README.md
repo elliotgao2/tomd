@@ -20,9 +20,11 @@ Convert HTML to Markdown.
 Input
 
 ```python
-from tomd import Tomd
+import tomd
 
-Tomd("<h1>h1</h1>").markdown
+tomd.Tomd('<h1>h1</h1>').markdown
+# or
+tomd.convert('<h1>h1</h1>')
 ```
 
 Output

@@ -1,5 +1,5 @@
 from tomd import Tomd
-
+import tomd
 string = """
 <h1>h1</h1>
 <h2>h2</h2>
@@ -52,3 +52,4 @@ string = """
 """
 
 print(Tomd(string).markdown)
+print(tomd.convert(string))
