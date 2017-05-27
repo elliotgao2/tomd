@@ -47,10 +47,7 @@ BlOCK_ELEMENTS = {
     'p': '<p\s.*?>(.*?)</p>',
     'p_with_out_class': '<p>(.*?)</p>',
     'thead': '<thead.*?>(.*?)</thead>',
-    'tr': '<tr>(.*?)</tr>',
-    'b': '<b>(.*?)</b>',
-    'i': '<i>(.*?)</i>',
-    'del': '<del>(.*?)</del>'
+    'tr': '<tr>(.*?)</tr>'
 }
 
 INLINE_ELEMENTS = {
