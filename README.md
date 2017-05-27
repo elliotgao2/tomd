@@ -1,6 +1,12 @@
 # tomd
 Convert HTML to Markdown.
 
+## Road map
+
+- [x] Basic support
+- [ ] Full support(Table, Nested list ,etc)
+- [ ] Command line tool
+
 ## Installation
 
 `pip install tomd`
