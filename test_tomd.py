@@ -28,7 +28,6 @@ string = """
 <b>bold</b>
 <i>italic</i>
 <b><i>bold italic</i></b>
-
 </p>
 """
 

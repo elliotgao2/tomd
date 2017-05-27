@@ -36,9 +36,7 @@ BlOCK_ELEMENTS = {
     'ol': '<ol.*?>(.*?)</ol>',
     'block_code': '<pre.*?><code.*?>(.*?)</code></pre>',
     'p': '<p\s.*?>(.*?)</p>',
-    'p_with_out_class': '<p>(.*?)</p>',
-    'b': '<b>(.*?)</b>',
-    'i': '<i>(.*?)</i>'}
+    'p_with_out_class': '<p>(.*?)</p>'}
 
 INLINE_ELEMENTS = {
     'b': '<b>(.*?)</b>',
