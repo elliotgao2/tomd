@@ -25,10 +25,30 @@ string = """
 <p><code>inline code</code></p>
 <pre><code>block code</code></pre>
 <p>
+<del>del</del>
 <b>bold</b>
 <i>italic</i>
 <b><i>bold italic</i></b>
 </p>
+
+<hr/>
+
+<table>
+<thead>
+<tr>
+<th>表头1</th>
+<th>表头2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>表格单元</td>
+<td>表格单元</td>
+</tr>
+<tr>
+<td>表格单元</td>
+<td>表格单元</td>
+</tr></tbody></table>
 """
 
 print(Tomd(string).markdown)

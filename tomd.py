@@ -20,7 +20,14 @@ MARKDOWN = {
     'inline_p': ('', ''),
     'inline_p_with_out_class': ('', ''),
     'b': ('**', '**'),
-    'i': ('*', '*')
+    'i': ('*', '*'),
+    'del': ('~~', '~~'),
+    'hr': ('\n---', '\n\n'),
+    'thead': ('\n', '|------\n'),
+    'tbody': ('\n', '\n'),
+    'td': ('|', ''),
+    'th': ('|', ''),
+    'tr': ('', '\n')
 }
 
 BlOCK_ELEMENTS = {
@@ -36,11 +43,19 @@ BlOCK_ELEMENTS = {
     'ol': '<ol.*?>(.*?)</ol>',
     'block_code': '<pre.*?><code.*?>(.*?)</code></pre>',
     'p': '<p\s.*?>(.*?)</p>',
-    'p_with_out_class': '<p>(.*?)</p>'}
+    'p_with_out_class': '<p>(.*?)</p>',
+    'thead': '<thead.*?>(.*?)</thead>',
+    # 'tbody': '<tbody.*?>(.*?)</tbody>',
+    'tr': '<tr>(.*?)</tr>',
+}
 
 INLINE_ELEMENTS = {
+    'td': '<td>(.*?)</td>',
+    'tr': '<tr>(.*?)</tr>',
+    'th': '<th>(.*?)</th>',
     'b': '<b>(.*?)</b>',
     'i': '<i>(.*?)</i>',
+    'del': '<del>(.*?)</del>',
     'inline_p': '<p\s.*?>(.*?)</p>',
     'inline_p_with_out_class': '<p>(.*?)</p>',
     'code': '<code.*?>(.*?)</code>',
@@ -85,6 +100,12 @@ class Element:
                 self.content = re.sub(pattern, '- \g<1>', self.content)
             elif self.tag == 'ol' and tag == 'li':
                 self.content = re.sub(pattern, '1. \g<1>', self.content)
+            elif self.tag == 'thead' and tag == 'tr':
+                self.content = re.sub(pattern, '\g<1>\n', self.content.replace('\n', ''))
+            elif self.tag == 'tr' and tag == 'th':
+                self.content = re.sub(pattern, '|\g<1>', self.content.replace('\n', ''))
+            elif self.tag == 'tr' and tag == 'td':
+                self.content = re.sub(pattern, '|\g<1>', self.content.replace('\n', ''))
             else:
                 wrapper = MARKDOWN.get(tag)
                 self.content = re.sub(pattern, '{}\g<1>{}'.format(wrapper[0], wrapper[1]), self.content)
