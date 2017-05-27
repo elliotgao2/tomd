@@ -36,18 +36,18 @@ string = """
 <table>
 <thead>
 <tr>
-<th>表头1</th>
-<th>表头2</th>
+<th>th1</th>
+<th>th2</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>表格单元</td>
-<td>表格单元</td>
+<td>td</td>
+<td>td</td>
 </tr>
 <tr>
-<td>表格单元</td>
-<td>表格单元</td>
+<td>td</td>
+<td>td</td>
 </tr></tbody></table>
 """
 
