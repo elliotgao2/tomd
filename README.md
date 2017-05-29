@@ -1,14 +1,18 @@
 # tomd
-Convert HTML to Markdown.
 
 ![[License](https://pypi.python.org/pypi/tomd/)](https://img.shields.io/pypi/l/tomd.svg)
 ![[Pypi](https://pypi.python.org/pypi/tomd/)](https://img.shields.io/pypi/v/tomd.svg)
 ![[Python](https://pypi.python.org/pypi/tomd/)](https://img.shields.io/pypi/pyversions/tomd.svg)
 
+When crawling online articles such as news, blogs, etc. I want to save them in markdown files but not databases.
+Tomd has the ability of converting the HTML that converted from markdown. If a HTML can't be described by markdown, tomd can't convert it right.
+Tomd is a python tool.
+
+
 ## Road map
 
 - [x] Basic support
-- [ ] Full support(Table, Nested list ,etc)
+- [ ] Full support(Nested list)
 - [ ] Command line tool
 
 ## Installation
