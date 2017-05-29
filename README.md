@@ -5,7 +5,7 @@
 ![[Python](https://pypi.python.org/pypi/tomd/)](https://img.shields.io/pypi/pyversions/tomd.svg)
 
 When crawling online articles such as news, blogs, etc. I want to save them in markdown files but not databases.
-Tomd has the ability of converting the HTML that converted from markdown. If a HTML can't be described by markdown, tomd can't convert it right.
+Tomd has the ability of converting a HTML that converted from markdown. If a HTML can't be described by markdown, tomd can't convert it right.
 Tomd is a python tool.
 
 
