@@ -15,6 +15,7 @@ MARKDOWN = {
     'li': ('- ', ''),
     'blockquote': ('\n> ', '\n'),
     'em': ('**', '**'),
+    'strong': ('**', '**'),
     'block_code': ('\n```\n', '\n```\n'),
     'span': ('', ''),
     'p': ('\n', '\n'),
@@ -66,7 +67,8 @@ INLINE_ELEMENTS = {
     'li': '<li.*?>(.*?)</li>',
     'img': '<img.*?src="(.*?)".*?>(.*?)</img>',
     'a': '<a.*?href="(.*?)".*?>(.*?)</a>',
-    'em': '<em.*?>(.*?)</em>'
+    'em': '<em.*?>(.*?)</em>',
+    'strong': '<strong.*?>(.*?)</strong>'
 }
 
 DELETE_ELEMENTS = ['<span.*?>', '</span>', '<div.*?>', '</div>']

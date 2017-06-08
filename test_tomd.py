@@ -1,5 +1,6 @@
-from tomd import Tomd
 import tomd
+from tomd import Tomd
+
 string = """
 <h1>h1</h1>
 <h2>h2</h2>
@@ -29,6 +30,8 @@ string = """
 <b>bold</b>
 <i>italic</i>
 <b><i>bold italic</i></b>
+<em>em</em>
+<strong>strong</strong>
 </p>
 
 <hr/>
@@ -49,6 +52,7 @@ string = """
 <td>td</td>
 <td>td</td>
 </tr></tbody></table>
+
 """
 
 print(Tomd(string).markdown)
