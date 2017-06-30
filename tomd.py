@@ -54,8 +54,8 @@ BlOCK_ELEMENTS = {
 }
 
 INLINE_ELEMENTS = {
-    'td': '<td>(.*?)</td>',
-    'tr': '<tr>(.*?)</tr>',
+    'td': '<td.*?>((.|\n)*?)</td>', #td element may span lines
+    'tr': '<tr>((.|\n)*?)</tr>',
     'th': '<th>(.*?)</th>',
     'b': '<b>(.*?)</b>',
     'i': '<i>(.*?)</i>',
@@ -70,7 +70,8 @@ INLINE_ELEMENTS = {
     'img': '<img.*?src="(.*?)".*?>(.*?)</img>',
     'a': '<a.*?href="(.*?)".*?>(.*?)</a>',
     'em': '<em.*?>(.*?)</em>',
-    'strong': '<strong.*?>(.*?)</strong>'
+    'strong': '<strong.*?>(.*?)</strong>',
+    'tbody': '<tbody.*?>((.|\n)*)</tbody>'
 }
 
 DELETE_ELEMENTS = ['<span.*?>', '</span>', '<div.*?>', '</div>']
@@ -96,6 +97,10 @@ class Element:
         return self._result
 
     def parse_inline(self):
+        self.content = self.content.replace('\r', '') #windows \r character
+        if self.tag == "table": #for removing tbody
+            self.content = re.sub(INLINE_ELEMENTS['tbody'], '\g<1>', self.content)
+
         for tag, pattern in INLINE_ELEMENTS.items():
             # print "---now looking at", tag, pattern
 
@@ -113,18 +118,17 @@ class Element:
                 self.content = re.sub(pattern, '|\g<1>', self.content.replace('\n', ''))
             elif self.tag == 'tr' and tag == 'td':
                 self.content = re.sub(pattern, '|\g<1>|', self.content.replace('\n', ''))
-                # print "---converting, content now:", tag, self.content
                 self.content = self.content.replace("||","|") #end of column also needs a pipe
-                # print "---converting, tr remove duplicate:", tag, self.content
+                # print "---converting, td remove duplicate:", tag, self.content
             elif self.tag == 'table' and tag == 'td':
                 self.content = re.sub(pattern, '|\g<1>|', self.content)
                 self.content = self.content.replace("||","|") #end of column also needs a pipe
                 self.content = self.content.replace('|\n\n', '|\n') #replace double new line
+                # print "---converting, td remove duplicate:", tag, self.content
                 self.construct_table()
             else:
                 wrapper = MARKDOWN.get(tag)
                 self.content = re.sub(pattern, '{}\g<1>{}'.format(wrapper[0], wrapper[1]), self.content)
-                # print "---converting else, content now:", tag, self.content
     def construct_table(self):
         # this function, after self.content has gained | for table entries,
         # adds the |---| in markdown to create a proper table
@@ -138,8 +142,9 @@ class Element:
         for i in xrange(count-1):
             pipe += "---|"
         pipe += "\n"
-        self.content = pipe + pipe + self.content
+        self.content = pipe + pipe + self.content #TODO: column titles?
         self.content = self.content.replace('|\n\n', '|\n') #replace double new line
+        self.content = self.content.replace("<br/>\n","<br/>") #end of column also needs a pipe
 
 
 class Tomd:
@@ -169,10 +174,10 @@ class Tomd:
                         elements.remove(e)
                 if can_append:
                     elements.append(element)
-        # print "done with convert, element is"
-        # for e in elements:
-        #     print str(e).replace('\n',"\\n")
-        # print "---"
+        print "\n\n\ndone with convert, element is"
+        for e in elements:
+            print repr(str(e))
+        print "---"
         elements.sort(key=lambda element: element.start_pos)
         self._markdown = ''.join([str(e) for e in elements])
 
