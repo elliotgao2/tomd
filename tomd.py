@@ -31,7 +31,10 @@ MARKDOWN = {
     'td': ('|', ''),
     'th': ('|', ''),
     'tr': ('', '\n'),
-    'table': ('', '\n')
+    'table': ('', '\n'),
+
+    #evernote
+    'e_p': ('', '\n')
 }
 
 BlOCK_ELEMENTS = {
@@ -50,7 +53,10 @@ BlOCK_ELEMENTS = {
     'p_with_out_class': '<p>(.*?)</p>',
     'thead': '<thead.*?>(.*?)</thead>',
     # 'tr': '<tr>(.*?)</tr>',
-    'table': '<table.*?>(.*?)</table>' #assume that table must be around tr
+    'table': '<table.*?>(.*?)</table>', #assume that table must be around tr
+
+    # evernote
+    'e_p': '<div style="font-size.*?>(.*?)</div>' #div for paragraph ?
 }
 
 INLINE_ELEMENTS = {
@@ -71,7 +77,7 @@ INLINE_ELEMENTS = {
     'a': '<a.*?href="(.*?)".*?>(.*?)</a>',
     'em': '<em.*?>(.*?)</em>',
     'strong': '<strong.*?>(.*?)</strong>',
-    'tbody': '<tbody.*?>((.|\n)*)</tbody>'
+    'tbody': '<tbody.*?>((.|\n)*)</tbody>',
 }
 
 DELETE_ELEMENTS = ['<span.*?>', '</span>', '<div.*?>', '</div>']
@@ -88,8 +94,9 @@ class Element:
         self._result = None
 
         if self.is_block:
-            # print "parsing tag:", self.tag, ", content: ", self.content
+            print "parsing tag:", self.tag, ", content: ", repr(self.content)
             self.parse_inline()
+            print "parsed:", self.tag, ", content: ", self.content
 
     def __str__(self):
         wrapper = MARKDOWN.get(self.tag)
@@ -98,6 +105,24 @@ class Element:
 
     def parse_inline(self):
         self.content = self.content.replace('\r', '') #windows \r character
+
+        if "e_" in self.tag: #evernote-specific parsing
+            # if self.content != re.sub(BlOCK_ELEMENTS['table'], '\g<1>', self.content):
+            for m in re.finditer(BlOCK_ELEMENTS['table'], self.content, re.I | re.S | re.M):
+                #hmm can there only be one table?
+                print "AHHHH THERES A TABLE\n\n"
+                inner = Element(start_pos=m.start(),
+                                  end_pos=m.end(),
+                                  content=''.join(m.groups()),
+                                  tag='table',
+                                  is_block=True)
+                self.content = inner.content
+                return #no need for further parsing ?
+
+            # if no table, parse as usual
+            self.content = self.content.replace('<hr/>', '\n---\n')
+            self.content = self.content.replace('<br/>', '')
+
         if self.tag == "table": #for removing tbody
             self.content = re.sub(INLINE_ELEMENTS['tbody'], '\g<1>', self.content)
 
@@ -138,11 +163,11 @@ class Element:
             if elt != "":
                 count = elt.count("|") #count number of pipes
                 break
-        pipe = "|"
+        pipe = "\n|" #beginning \n for safety
         for i in xrange(count-1):
             pipe += "---|"
         pipe += "\n"
-        self.content = pipe + pipe + self.content #TODO: column titles?
+        self.content = pipe + pipe + self.content + "\n" #TODO: column titles?
         self.content = self.content.replace('|\n\n', '|\n') #replace double new line
         self.content = self.content.replace("<br/>\n","<br/>") #end of column also needs a pipe
 
@@ -160,7 +185,8 @@ class Tomd:
             # print "pattern is", pattern, "tag", tag
             for m in re.finditer(pattern, html, re.I | re.S | re.M):
                 # now m contains the pattern without the tag
-                # print "found", tag, m.groups(), "start", m.start(), "end", m.end()
+                # if tag == "e_p":
+                print "found", tag, m.groups(), "start", m.start(), "end", m.end()
                 element = Element(start_pos=m.start(),
                                   end_pos=m.end(),
                                   content=''.join(m.groups()),
@@ -174,10 +200,10 @@ class Tomd:
                         elements.remove(e)
                 if can_append:
                     elements.append(element)
-        # print "\n\n\ndone with convert, element is"
-        # for e in elements:
-        #     print repr(str(e))
-        # print "---"
+        print "\n\n\ndone with convert, element is"
+        for e in elements:
+            print repr(str(e))
+        print "---"
         elements.sort(key=lambda element: element.start_pos)
         self._markdown = ''.join([str(e) for e in elements])
 
