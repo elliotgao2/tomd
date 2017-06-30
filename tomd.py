@@ -30,7 +30,8 @@ MARKDOWN = {
     'tbody': ('\n', '\n'),
     'td': ('|', ''),
     'th': ('|', ''),
-    'tr': ('', '\n')
+    'tr': ('', '\n'),
+    'table': ('', '\n')
 }
 
 BlOCK_ELEMENTS = {
@@ -48,8 +49,8 @@ BlOCK_ELEMENTS = {
     'p': '<p\s.*?>(.*?)</p>',
     'p_with_out_class': '<p>(.*?)</p>',
     'thead': '<thead.*?>(.*?)</thead>',
-    'tr': '<tr>(.*?)</tr>',
-    'table': '<table>(.*?)</table>'
+    # 'tr': '<tr>(.*?)</tr>',
+    'table': '<table.*?>(.*?)</table>' #assume that table must be around tr
 }
 
 INLINE_ELEMENTS = {
@@ -86,6 +87,7 @@ class Element:
         self._result = None
 
         if self.is_block:
+            # print "parsing tag:", self.tag, ", content: ", self.content
             self.parse_inline()
 
     def __str__(self):
@@ -95,6 +97,7 @@ class Element:
 
     def parse_inline(self):
         for tag, pattern in INLINE_ELEMENTS.items():
+            # print "---now looking at", tag, pattern
 
             if tag == 'a':
                 self.content = re.sub(pattern, '[\g<2>](\g<1>)', self.content)
@@ -112,22 +115,47 @@ class Element:
                 self.content = re.sub(pattern, '|\g<1>|', self.content.replace('\n', ''))
                 # print "---converting, content now:", tag, self.content
                 self.content = self.content.replace("||","|") #end of column also needs a pipe
-                # print "---converting, remove duplicate:", tag, self.content
+                # print "---converting, tr remove duplicate:", tag, self.content
+            elif self.tag == 'table' and tag == 'td':
+                self.content = re.sub(pattern, '|\g<1>|', self.content)
+                self.content = self.content.replace("||","|") #end of column also needs a pipe
+                self.content = self.content.replace('|\n\n', '|\n') #replace double new line
+                self.construct_table()
             else:
                 wrapper = MARKDOWN.get(tag)
                 self.content = re.sub(pattern, '{}\g<1>{}'.format(wrapper[0], wrapper[1]), self.content)
+                # print "---converting else, content now:", tag, self.content
+    def construct_table(self):
+        # this function, after self.content has gained | for table entries,
+        # adds the |---| in markdown to create a proper table
+
+        temp = self.content.split('\n',3)
+        for elt in temp:
+            if elt != "":
+                count = elt.count("|") #count number of pipes
+                break
+        pipe = "|"
+        for i in xrange(count-1):
+            pipe += "---|"
+        pipe += "\n"
+        self.content = pipe + pipe + self.content
+        self.content = self.content.replace('|\n\n', '|\n') #replace double new line
 
 
 class Tomd:
     def __init__(self, html='', options=None):
-        self.html = html
-        self.options = options
+        self.html = html #actual data
+        self.options = options # haven't been implemented yet
         self._markdown = ''
 
     def convert(self, html, options=None):
+        #main function here
         elements = []
         for tag, pattern in BlOCK_ELEMENTS.items():
+            # print "pattern is", pattern, "tag", tag
             for m in re.finditer(pattern, html, re.I | re.S | re.M):
+                # now m contains the pattern without the tag
+                # print "found", tag, m.groups(), "start", m.start(), "end", m.end()
                 element = Element(start_pos=m.start(),
                                   end_pos=m.end(),
                                   content=''.join(m.groups()),
@@ -141,7 +169,10 @@ class Tomd:
                         elements.remove(e)
                 if can_append:
                     elements.append(element)
-
+        # print "done with convert, element is"
+        # for e in elements:
+        #     print str(e).replace('\n',"\\n")
+        # print "---"
         elements.sort(key=lambda element: element.start_pos)
         self._markdown = ''.join([str(e) for e in elements])
 
