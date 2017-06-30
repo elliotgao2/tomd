@@ -174,10 +174,10 @@ class Tomd:
                         elements.remove(e)
                 if can_append:
                     elements.append(element)
-        print "\n\n\ndone with convert, element is"
-        for e in elements:
-            print repr(str(e))
-        print "---"
+        # print "\n\n\ndone with convert, element is"
+        # for e in elements:
+        #     print repr(str(e))
+        # print "---"
         elements.sort(key=lambda element: element.start_pos)
         self._markdown = ''.join([str(e) for e in elements])
 
