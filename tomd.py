@@ -48,7 +48,8 @@ BlOCK_ELEMENTS = {
     'p': '<p\s.*?>(.*?)</p>',
     'p_with_out_class': '<p>(.*?)</p>',
     'thead': '<thead.*?>(.*?)</thead>',
-    'tr': '<tr>(.*?)</tr>'
+    'tr': '<tr>(.*?)</tr>',
+    'table': '<table>(.*?)</table>'
 }
 
 INLINE_ELEMENTS = {
@@ -108,7 +109,10 @@ class Element:
             elif self.tag == 'tr' and tag == 'th':
                 self.content = re.sub(pattern, '|\g<1>', self.content.replace('\n', ''))
             elif self.tag == 'tr' and tag == 'td':
-                self.content = re.sub(pattern, '|\g<1>', self.content.replace('\n', ''))
+                self.content = re.sub(pattern, '|\g<1>|', self.content.replace('\n', ''))
+                # print "---converting, content now:", tag, self.content
+                self.content = self.content.replace("||","|") #end of column also needs a pipe
+                # print "---converting, remove duplicate:", tag, self.content
             else:
                 wrapper = MARKDOWN.get(tag)
                 self.content = re.sub(pattern, '{}\g<1>{}'.format(wrapper[0], wrapper[1]), self.content)
