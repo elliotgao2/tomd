@@ -97,8 +97,8 @@ class Element:
         if self.is_block:
             # print "parsing tag:", self.tag, ", content: ", repr(self.content)
             self.parse_inline()
-            if self.tag != 'table':
-                print "parsed:", self.tag, self.folder, ", content: ", repr(self.content)
+            # if self.tag != 'table':
+                # print "parsed:", self.tag, self.folder, ", content: ", repr(self.content)
 
     def __str__(self):
         wrapper = MARKDOWN.get(self.tag)
@@ -126,7 +126,7 @@ class Element:
             # if self.content != re.sub(BlOCK_ELEMENTS['table'], '\g<1>', self.content):
             for m in re.finditer(BlOCK_ELEMENTS['table'], self.content, re.I | re.S | re.M):
                 #hmm can there only be one table?
-                print "AHHHH THERES A TABLE\n\n"
+                # print "AHHHH THERES A TABLE\n\n"
                 inner = Element(start_pos=m.start(),
                                   end_pos=m.end(),
                                   content=''.join(m.groups()),
@@ -199,7 +199,7 @@ class Tomd:
         self.folder = folder
         self.file = file
         self.options = options # haven't been implemented yet
-        self._markdown = ''
+        self._markdown = self.convert(self.html,self.options)
 
     def convert(self, html="", options=None):
         if html == "":
@@ -211,7 +211,7 @@ class Tomd:
             for m in re.finditer(pattern, html, re.I | re.S | re.M):
                 # now m contains the pattern without the tag
                 # if tag == "e_p":
-                print "found", tag, m.groups(), "start", m.start(), "end", m.end(), self.folder
+                # print "found", tag, m.groups(), "start", m.start(), "end", m.end(), self.folder
                 element = Element(start_pos=m.start(),
                                   end_pos=m.end(),
                                   content=''.join(m.groups()),
@@ -226,10 +226,10 @@ class Tomd:
                         elements.remove(e)
                 if can_append:
                     elements.append(element)
-        print "\n\n\ndone with convert, element is"
-        for e in elements:
-            print repr(str(e))
-        print "---"
+        # print "\n\n\ndone with convert, element is"
+        # for e in elements:
+        #     print repr(str(e))
+        # print "---"
         elements.sort(key=lambda element: element.start_pos)
         self._markdown = ''.join([str(e) for e in elements])
 
@@ -241,6 +241,22 @@ class Tomd:
     def markdown(self):
         self.convert(self.html, self.options)
         return self._markdown
+
+    def export(self,folder=False):
+        if len(self.file) < 1:
+            warnings.warn("file not specified, renamed to tmp.md")
+            file = "tmp.md"
+        else:
+            file = self.file.replace('.html','.md') #rename to md
+        if len(self.folder) < 2:
+            warnings.warn("folder not specified, will save to pwd")
+        elif not folder:
+            file = self.folder + '/' + file
+        else: #if folder is specified
+            file = folder + '/' + file
+        f = open(file,'w')
+        f.write(self._markdown)
+        f.close()
 
 
 _inst = Tomd()

@@ -15,9 +15,7 @@ FILE = "Week 10 37 to 313.html"
 
 f = open(FOLDER + "/" + FILE)
 for line in f:
-  # print line, #print the files
   CONTENT += line
-# print "load_content: done"
 
 # CONTENT = """
 # <p>For <em>Implementing</em>, working with <a href="http://chiraag.scripts.mit.edu/wiki/start" target="_blank"><strong>Chiraag Juvekar</strong></a> and <a href="http://www-mtl.mit.edu/~anantha/" target="_blank"><strong>Prof. Anantha Chandrakasan</strong></a>.</p>
@@ -58,7 +56,5 @@ for line in f:
 # """
 
 converter = tomd.Tomd(CONTENT,FOLDER,FILE)
+# print(converter.markdown())
 
-# print(repr(tomd.convert(CONTENT)))
-
-print(converter.convert())
