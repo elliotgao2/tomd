@@ -24,6 +24,7 @@ MARKDOWN = {
     'inline_p_with_out_class': ('', ''),
     'b': ('**', '**'),
     'i': ('*', '*'),
+    'em': ('*', '*'),
     'del': ('~~', '~~'),
     'hr': ('\n---', '\n\n'),
     'thead': ('\n', '|------\n'),
@@ -106,6 +107,7 @@ class Element:
 
     def parse_inline(self):
         self.content = self.content.replace('\r', '') #windows \r character
+        self.content = self.content.replace('\xc2\xa0', ' ') #no break space
         self.content = self.content.replace('&quot;', '\"') #html quote mark
 
         for m in re.finditer("<img(.*?)en_todo.*?>",self.content):
@@ -169,8 +171,9 @@ class Element:
                 wrapper = MARKDOWN.get(tag)
                 self.content = re.sub(pattern, '{}\g<1>{}'.format(wrapper[0], wrapper[1]), self.content)
 
-        # if self.tag == "e_p" and self.content[-2:] != '\n': #div, add new line if not there
-        #     self.content += '\n'
+        if self.tag == "e_p" and self.content[-1:] != '\n' and len(self.content) > 2: 
+            # focusing on div, add new line if not there (and if content is long enough)
+            self.content += '\n'
 
     def construct_table(self):
         # this function, after self.content has gained | for table entries,
