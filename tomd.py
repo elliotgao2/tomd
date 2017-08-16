@@ -48,16 +48,16 @@ BlOCK_ELEMENTS = {
     'p': '<p\s.*?>(.*?)</p>',
     'p_with_out_class': '<p>(.*?)</p>',
     'thead': '<thead.*?>(.*?)</thead>',
-    'tr': '<tr>(.*?)</tr>'
+    'tr': '<tr.*?>(.*?)</tr>'
 }
 
 INLINE_ELEMENTS = {
-    'td': '<td>(.*?)</td>',
-    'tr': '<tr>(.*?)</tr>',
-    'th': '<th>(.*?)</th>',
-    'b': '<b>(.*?)</b>',
-    'i': '<i>(.*?)</i>',
-    'del': '<del>(.*?)</del>',
+    'td': '<td.*?>(.*?)</td>',
+    'tr': '<tr.*?>(.*?)</tr>',
+    'th': '<th.*?>(.*?)</th>',
+    'b': '<b.*?>(.*?)</b>',
+    'i': '<i.*?>(.*?)</i>',
+    'del': '<del.*?>(.*?)</del>',
     'inline_p': '<p\s.*?>(.*?)</p>',
     'inline_p_with_out_class': '<p>(.*?)</p>',
     'code': '<code.*?>(.*?)</code>',

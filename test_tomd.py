@@ -38,7 +38,7 @@ string = """
 
 <table>
 <thead>
-<tr>
+<tr class="1">
 <th>th1</th>
 <th>th2</th>
 </tr>
