@@ -69,13 +69,14 @@ INLINE_ELEMENTS = {
     'ol': '<ol.*?>(.*?)</ol>',
     'li': '<li.*?>(.*?)</li>',
     'img': '<img.*?src="(.*?)".*?>(.*?)</img>',
+    'img_single': '<img.*?src="(.*?)".*?/>',
     'a': '<a.*?href="(.*?)".*?>(.*?)</a>',
     'em': '<em.*?>(.*?)</em>',
     'strong': '<strong.*?>(.*?)</strong>',
     'tbody': '<tbody.*?>((.|\n)*)</tbody>',
 }
 
-DELETE_ELEMENTS = ['<span.*?>', '</span>', '<div.*?>', '</div>','<br clear="none"/>']
+DELETE_ELEMENTS = ['<span.*?>', '</span>', '<div.*?>', '</div>','<br clear="none"/>', '<center.*?>', '</center>']
 
 class Element:
     def __init__(self, start_pos, end_pos, content, tag, folder, is_block=False):
@@ -143,6 +144,8 @@ class Element:
                 self.content = re.sub(pattern, '[\g<2>](\g<1>)', self.content)
             elif tag == 'img':
                 self.content = re.sub(pattern, '![\g<2>](\g<1>)', self.content)
+            elif tag == 'img_single':
+                self.content = re.sub(pattern, '![](\g<1>)', self.content)
             elif self.tag == 'ul' and tag == 'li':
                 self.content = re.sub(pattern, '- \g<1>', self.content)
             elif self.tag == 'ol' and tag == 'li':
