@@ -11,6 +11,7 @@ string = """
 <p>paragraph
 <a href="https://github.com">link</a>
 <img src="https://github.com" class="dsad">img</img>
+<img src="https://github.com" class="dsad"/>
 </p>
 <ul>
 <li>1</li>
