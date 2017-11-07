@@ -75,7 +75,7 @@ INLINE_ELEMENTS = {
     'img_single_no_close': '<img.*?src="(.*?)".*?>',
     'a': '<a.*?href="(.*?)".*?>(.*?)</a>',
     'em': '<em.*?>(.*?)</em>',
-    'strong': '<strong.*?>(.*?)</strong>',
+    'strong': '<strong.*?>(\s*)(.*?)(\s*)</strong>',
     'tbody': '<tbody.*?>((.|\n)*)</tbody>',
 }
 
@@ -166,7 +166,10 @@ class Element:
                 self.construct_table()
             else:
                 wrapper = MARKDOWN.get(tag)
-                self.content = re.sub(pattern, '{}\g<1>{}'.format(wrapper[0], wrapper[1]), self.content)
+                if tag == "strong":
+                    self.content = re.sub(pattern, '{}\g<2>{}'.format(wrapper[0], wrapper[1]), self.content)
+                else:
+                    self.content = re.sub(pattern, '{}\g<1>{}'.format(wrapper[0], wrapper[1]), self.content)
 
         if self.tag == "e_p" and self.content[-1:] != '\n' and len(self.content) > 2:
             # focusing on div, add new line if not there (and if content is long enough)
