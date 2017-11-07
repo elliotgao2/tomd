@@ -70,6 +70,7 @@ INLINE_ELEMENTS = {
     'li': '<li.*?>(.*?)</li>',
     'img': '<img.*?src="(.*?)".*?>(.*?)</img>',
     'img_single': '<img.*?src="(.*?)".*?/>',
+    'img_single_no_close': '<img.*?src="(.*?)".*?>',
     'a': '<a.*?href="(.*?)".*?>(.*?)</a>',
     'em': '<em.*?>(.*?)</em>',
     'strong': '<strong.*?>(.*?)</strong>',
