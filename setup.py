@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 
 setup(
     name="tomd",
-    version="0.1.3",
+    version="0.1.4",
     description="Convert HTML to Markdown.",
     author="Gaojiuli",
     author_email="gaojiuli@gmail.com",
