@@ -34,7 +34,7 @@ string = """
 <b><i>bold italic</i></b>
 <em>em</em>
 <strong>strong</strong>
-<strong> strong   </strong>
+aa <strong> strong   </strong> aa
 </p>
 
 <hr/>
