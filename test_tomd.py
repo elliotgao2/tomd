@@ -12,6 +12,7 @@ string = """
 <a href="https://github.com">link</a>
 <img src="https://github.com" class="dsad">img</img>
 <img src="https://github.com" class="dsad"/>
+<img src="https://github.com" class="dsad">
 </p>
 <ul>
 <li>1</li>
@@ -33,6 +34,7 @@ string = """
 <b><i>bold italic</i></b>
 <em>em</em>
 <strong>strong</strong>
+aa <strong> strong   </strong> aa
 </p>
 
 <hr/>
