@@ -151,9 +151,9 @@ class Element:
             elif tag == 'img_single_no_close':
                 self.content = re.sub(pattern, '![](\g<1>)', self.content)
             elif self.tag == 'ul' and tag == 'li':
-                self.content = re.sub(pattern, '- \g<1>', self.content)
+                self.content = re.sub(pattern, '- \g<1>\n', self.content)
             elif self.tag == 'ol' and tag == 'li':
-                self.content = re.sub(pattern, '1. \g<1>', self.content)
+                self.content = re.sub(pattern, '1. \g<1>\n', self.content)
             elif self.tag == 'thead' and tag == 'tr':
                 self.content = re.sub(pattern, '\g<1>\n', self.content.replace('\n', ''))
             elif self.tag == 'tr' and tag == 'th':
