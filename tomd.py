@@ -207,6 +207,7 @@ class Tomd:
         if html == "":
             html = self.html
         # main function here
+        html = re.sub("\s+",'', html) #del \n\t
         elements = []
         for tag, pattern in BlOCK_ELEMENTS.items():
             for m in re.finditer(pattern, html, re.I | re.S | re.M):
