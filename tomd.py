@@ -134,8 +134,6 @@ class Element:
             self.content = self.content.replace('<hr/>', '\n---\n')
             self.content = self.content.replace('<br/>', '')
 
-        if self.tag == "table":  # for removing tbody
-            self.content = re.sub(INLINE_ELEMENTS['tbody'], '\g<1>', self.content)
 
         INLINE_ELEMENTS_LIST_KEYS = list(INLINE_ELEMENTS.keys())
         INLINE_ELEMENTS_LIST_KEYS.sort()
@@ -161,11 +159,6 @@ class Element:
             elif self.tag == 'tr' and tag == 'td':
                 self.content = re.sub(pattern, '|\g<1>|', self.content.replace('\n', ''))
                 self.content = self.content.replace("||", "|")  # end of column also needs a pipe
-            elif self.tag == 'table' and tag == 'td':
-                self.content = re.sub(pattern, '|\g<1>|', self.content)
-                self.content = self.content.replace("||", "|")  # end of column also needs a pipe
-                self.content = self.content.replace('|\n\n', '|\n')  # replace double new line
-                self.construct_table()
             else:
                 wrapper = MARKDOWN.get(tag)
                 if tag == "strong":
@@ -177,22 +170,6 @@ class Element:
             # focusing on div, add new line if not there (and if content is long enough)
             self.content += '\n'
 
-    def construct_table(self):
-        # this function, after self.content has gained | for table entries,
-        # adds the |---| in markdown to create a proper table
-
-        temp = self.content.split('\n', 3)
-        for elt in temp:
-            if elt != "":
-                count = elt.count("|")  # count number of pipes
-                break
-        pipe = "\n|"  # beginning \n for safety
-        for i in range(count - 1):
-            pipe += "---|"
-        pipe += "\n"
-        self.content = pipe + pipe + self.content + "\n"  # TODO: column titles?
-        self.content = self.content.replace('|\n\n', '|\n')  # replace double new line
-        self.content = self.content.replace("<br/>\n", "<br/>")  # end of column also needs a pipe
 
 
 class Tomd:
