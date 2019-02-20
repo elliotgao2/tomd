@@ -39,6 +39,7 @@ MARKDOWN = {
     'e_p': ('', '\n')
 }
 
+
 BlOCK_ELEMENTS = {
     'h1': '<h1.*?>(.*?)</h1>',
     'h2': '<h2.*?>(.*?)</h2>',
@@ -107,6 +108,7 @@ class Element:
         self.content = self.content.replace('\r', '')  # windows \r character
         self.content = self.content.replace('\xc2\xa0', ' ')  # no break space
         self.content = self.content.replace('&quot;', '\"')  # html quote mark
+        self.content = self.content.replace('&nbsp;', ' ')  # html quote mark
 
         for m in re.finditer("<img(.*?)en_todo.*?>", self.content):
             # remove img and change to [ ] and [x]
