@@ -10,7 +10,6 @@ MARKDOWN = {
     'h5': "#####",
     'h6': "######",
     "blockquote": ">",
-    "li": "-",
     "hr": "---",
     "p": "\n"
 }
@@ -22,6 +21,11 @@ INLINE = {
     'i': ('*', '*'),
     'del': ('~~', '~~'),
     "code": ('`', '`')
+}
+
+LISTS = {
+    'ul': '-',
+    'ol': '*'
 }
 
 split_str = "++++++++++++++++++"
@@ -67,6 +71,16 @@ class Tomd:
         d = pq(html)
         for e in d('pre'):
             inline_mark = "```" + split_str + pq(e).html() + split_str + "```" + split_str
+            html = html.replace(str(pq(e)), inline_mark)
+
+        d = pq(html)
+        selectors = ','.join(LISTS.keys())
+        for e in d(selectors):
+            l = pq(e)
+            inline_mark = '<p>'
+            for i in l('li'):
+                inline_mark += split_str + MARKDOWN.get(e.tag) + " " + pq(i).text() + split_str
+            inline_mark += '</p>
             html = html.replace(str(pq(e)), inline_mark)
 
         d = pq(html)
