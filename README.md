@@ -1,151 +1,126 @@
 # tomd
 
-![[License](https://pypi.python.org/pypi/tomd/)](https://img.shields.io/pypi/l/tomd.svg)
-![[Pypi](https://pypi.python.org/pypi/tomd/)](https://img.shields.io/pypi/v/tomd.svg)
-![[Python](https://pypi.python.org/pypi/tomd/)](https://img.shields.io/pypi/pyversions/tomd.svg)
+[![CI](https://img.shields.io/github/actions/workflow/status/elliotgao2/tomd/ci.yml?branch=master&style=for-the-badge&logo=githubactions&logoColor=white&label=CI)](https://github.com/elliotgao2/tomd/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/tomd?style=for-the-badge&logo=pypi&logoColor=white&label=PyPI&color=3775A9)](https://pypi.org/project/tomd/)
+[![Python](https://img.shields.io/pypi/pyversions/tomd?style=for-the-badge&logo=python&logoColor=white&color=3776AB)](https://pypi.org/project/tomd/)
+[![License](https://img.shields.io/pypi/l/tomd?style=for-the-badge&color=A31F34)](https://pypi.org/project/tomd/)
+[![Downloads](https://img.shields.io/pypi/dm/tomd?style=for-the-badge&logo=pypi&logoColor=white&label=Downloads&color=5C7CFA)](https://pypi.org/project/tomd/)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json&style=for-the-badge)](https://github.com/astral-sh/ruff)
+[![uv](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json&style=for-the-badge)](https://github.com/astral-sh/uv)
 
-When crawling online articles such as news, blogs, etc. I want to save them in markdown files but not databases.
-Tomd has the ability of converting a HTML that converted from markdown. If a HTML can't be described by markdown, tomd can't convert it right.
-Tomd is a python tool.
+> Convert HTML to Markdown.
 
+`tomd` is a small Python library that takes an HTML string and returns the
+Markdown that produced it (or an approximation, when the HTML wasn't
+originally Markdown). Handy for archiving articles, scraped blog posts, or
+anything else where you'd rather work with plain text than DOM trees.
 
-## Road map
+## Install
 
-- [x] Basic support
-- [ ] Full support(Nested list)
-- [ ] Command line tool
+```bash
+pip install tomd
+```
 
-## Installation
+Requires Python 3.10+.
 
-`pip install tomd`
-
-## Getting Started
-
-Input
+## Quickstart
 
 ```python
 import tomd
 
-tomd.Tomd('<h1>h1</h1>').markdown
-# or
-tomd.convert('<h1>h1</h1>')
+tomd.convert("<h1>Hello, world!</h1>")
+# => '\n# Hello, world!\n'
 ```
 
-Output
-
-```markdown
-# h1
-```
-
-## Usage
+Or via the class:
 
 ```python
 from tomd import Tomd
 
+Tomd("<h1>Hello, world!</h1>").markdown
+```
 
-html="""
-<h1>h1</h1>
-<h2>h2</h2>
-<h3>h3</h3>
-<h4>h4</h4>
-<h5>h5</h5>
-<h6>h6</h6>
-<p>paragraph
-<a href="https://github.com">link</a>
-<img src="https://github.com" class="dsad">img</img>
-</p>
+## What it supports
+
+| Markdown        | HTML                                  |
+| --------------- | ------------------------------------- |
+| Headings        | `<h1>`–`<h6>`                         |
+| Bold / italic   | `<b>`, `<strong>`, `<i>`, `<em>`      |
+| Inline code     | `<code>`                              |
+| Strikethrough   | `<del>`                               |
+| Links           | `<a href="https://...">`              |
+| Images          | `<img src="..." alt="..."/>`          |
+| Unordered lists | `<ul><li>...</li></ul>`               |
+| Ordered lists   | `<ol><li>...</li></ol>`               |
+| Blockquotes     | `<blockquote>...</blockquote>`        |
+| Horizontal rule | `<hr/>`                               |
+| Code blocks     | `<pre><code>...</code></pre>`         |
+| Tables          | `<table><thead>...<tbody>...</table>` |
+
+If your HTML can't be cleanly expressed in Markdown (nested layouts,
+floating divs, etc.), the output will lose some structure — `tomd` aims at
+the round-trip Markdown → HTML → Markdown case, not arbitrary HTML.
+
+## Example
+
+```python
+from tomd import Tomd
+
+html = """
+<h1>Heading</h1>
+<p><b>bold</b> and <i>italic</i> and <a href="https://example.com">a link</a></p>
 <ul>
-<li>1</li>
-<li>2</li>
-<li>3</li>
+  <li>one</li>
+  <li>two</li>
 </ul>
-<ol>
-<li>1</li>
-<li>2</li>
-<li>3</li>
-</ol>
-<blockquote>blockquote</blockquote>
-<p><code>inline code</code></p>
-<pre><code>block code</code></pre>
-<p>
-<del>del</del>
-<b>bold</b>
-<i>italic</i>
-<b><i>bold italic</i></b>
-</p>
-
-<hr/>
-
-<table>
-<thead>
-<tr>
-<th>th1</th>
-<th>th2</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>td</td>
-<td>td</td>
-</tr>
-<tr>
-<td>td</td>
-<td>td</td>
-</tr></tbody></table>
+<blockquote>a quote</blockquote>
 """
 
-
-Tomd(html).markdown
+print(Tomd(html).markdown)
 ```
 
-## Result
-
-```markdown
-# h1
-
-## h2
-
-### h3
-
-#### h4
-
-##### h5
-
-###### h6
-
-paragraph
-[link](https://github.com)
-![img](https://github.com)
-
-
-- 1
-- 2
-- 3
-
-1. 1
-1. 2
-1. 3
-
-> blockquote
-
-`inline code`
-
-
-block code
-
-
-~~del~~
-**bold**
-*italic*
-***bold italic***
-
-
----
-
-
-|th1|th2
-|------
-|td|td
-|td|td
-
 ```
+# Heading
+
+**bold** and *italic* and [a link](https://example.com)
+
+- one
+- two
+
+> a quote
+```
+
+## Development
+
+```bash
+git clone https://github.com/elliotgao2/tomd.git
+cd tomd
+uv sync             # install deps into .venv
+uv run pytest       # run tests
+uv run ruff check . # lint
+```
+
+We use [uv](https://github.com/astral-sh/uv) for packaging and
+[ruff](https://github.com/astral-sh/ruff) for lint + format. Install the
+pre-commit hooks:
+
+```bash
+uv run pre-commit install
+```
+
+## Roadmap
+
+- [x] Headings, emphasis, links, images, lists, blockquotes, tables, HR,
+      code blocks
+- [ ] Nested lists
+- [ ] CLI (`tomd < input.html > output.md`)
+
+## Contributing
+
+Pull requests are welcome. For non-trivial changes, please open an issue
+first to discuss. Make sure `uv run pytest` and `uv run ruff check .` pass
+before submitting.
+
+## License
+
+[MIT](LICENSE) © Elliot Gao
