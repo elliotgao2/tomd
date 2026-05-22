@@ -430,7 +430,9 @@ class _Converter:
         if not header_row:
             return ""
 
-        cols = max([len(header_row), *(len(r) for r in body_rows)]) if body_rows else len(header_row)
+        cols = (
+            max([len(header_row), *(len(r) for r in body_rows)]) if body_rows else len(header_row)
+        )
         header_row = header_row + [""] * (cols - len(header_row))
         lines = ["| " + " | ".join(header_row) + " |"]
         lines.append("| " + " | ".join(["---"] * cols) + " |")

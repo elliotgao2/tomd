@@ -541,7 +541,9 @@ print(squares)</code></pre>
     assert "squares = [x*x for x in range(10)]" in out
     assert "print(squares)" in out
     assert "[0, 1, 4, 9, 16, 25, 36, 49, 64, 81]" in out
-    assert "[docs](https://docs.python.org/3/tutorial/datastructures.html#list-comprehensions)" in out
+    assert (
+        "[docs](https://docs.python.org/3/tutorial/datastructures.html#list-comprehensions)" in out
+    )
 
 
 def test_real_world_news_article():
