@@ -607,3 +607,13 @@ def test_output_ends_with_single_newline():
     out = convert("<h1>x</h1>")
     assert out.endswith("\n")
     assert not out.endswith("\n\n")
+
+
+def test_tfoot_only_table_keeps_content():
+    out = md("<table><tfoot><tr><td>total: 5</td></tr></tfoot></table>")
+    assert "total: 5" in out
+
+
+def test_empty_thead_row_does_not_drop_body():
+    out = md("<table><thead><tr></tr></thead><tbody><tr><td>x</td></tr></tbody></table>")
+    assert "x" in out

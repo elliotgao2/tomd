@@ -414,21 +414,27 @@ class _Converter:
             header_row = thead_rows[0]
             body_rows = thead_rows[1:] + tbody_rows + direct_rows + tfoot_rows
         else:
-            combined = tbody_rows + direct_rows
+            combined = tbody_rows + direct_rows + tfoot_rows
             first_tr = self._first_row_node(node)
             has_th_header = first_tr is not None and any(
                 isinstance(c.tag, str) and c.tag.lower() == "th" for c in first_tr
             )
             if has_th_header and combined:
                 header_row = combined[0]
-                body_rows = combined[1:] + tfoot_rows
+                body_rows = combined[1:]
             elif combined:
                 cols = max(len(r) for r in combined)
                 header_row = [""] * cols
-                body_rows = combined + tfoot_rows
+                body_rows = combined
 
         if not header_row:
-            return ""
+            # Degenerate tables (a lone <tfoot>, or an empty <thead> row) still
+            # carry content: fall back to a blank header rather than dropping
+            # every row silently.
+            if not body_rows:
+                return ""
+            cols = max([1, *(len(r) for r in body_rows)])
+            header_row = [""] * cols
 
         cols = (
             max([len(header_row), *(len(r) for r in body_rows)]) if body_rows else len(header_row)
